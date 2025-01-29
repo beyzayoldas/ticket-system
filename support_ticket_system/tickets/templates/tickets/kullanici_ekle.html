@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yeni Kullanıcı Ekle</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Yeni Kullanıcı Ekle</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Form alanları burada otomatik olarak oluşturuluyor -->
+            <button type="submit" class="btn btn-primary">Kullanıcı Ekle</button>
+        </form>
+        <a href="{% url 'kullanicilari_yonet' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+    </div>
+</body>
+</html>

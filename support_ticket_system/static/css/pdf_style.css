@@ -1,0 +1,36 @@
+/* Genel PDF stil ayarları */
+@page {
+    size: A4; /* A4 boyutu */
+    margin: 20mm; /* Kenar boşluklarını artırın */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px; /* Daha küçük font boyutu */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 9px; /* Tablo yazı boyutunu küçültün */
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+    word-wrap: break-word; /* Uzun metinleri kaydır */
+}
+
+table th {
+    background-color: #f4f4f4;
+}

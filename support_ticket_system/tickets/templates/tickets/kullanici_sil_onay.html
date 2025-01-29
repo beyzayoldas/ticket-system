@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kullanıcıyı Sil</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>{{ user.username }} adlı kullanıcıyı silmek üzeresiniz</h1>
+        <p>Bu işlem geri alınamaz. Devam etmek istediğinize emin misiniz?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Evet, Sil</button>
+            <a href="{% url 'kullanicilari_yonet' %}" class="btn btn-secondary">Hayır, Vazgeç</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tüm Destek Talepleri</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+    body {
+        background-color: #f4f6f9;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+    }
+
+    .btn-container a {
+        margin-left: 10px;
+    }
+
+    h1 {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .filter-form {
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        width: 60%;
+        margin-right: 10px;
+    }
+
+    .search-button {
+        width: 100px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    table th {
+        background-color: #495057;
+        color: white;
+        text-align: center;
+        position: relative;
+    }
+
+    table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .sort-icon {
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .sort-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-secondary {
+        background-color: #495057;
+        border-color: #495057;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #343a40;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .row-opened {
+        background-color: #fff8e1;
+        color: #f9a825;
+    }
+
+    .row-closed {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .row-durum-yok {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+
+    .status-legend {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .legend-item {
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .legend-durum-yok {
+        background-color: #c62828; /* Kırmızı */
+    }
+
+    .legend-open {
+        background-color: #f9a825; /* Sarı */
+        color: black;
+    }
+
+    .legend-closed {
+        background-color: #2e7d32; /* Yeşil */
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Tüm Destek Talepleri</h1>
+
+    <div class="status-legend">
+        <span class="legend-item legend-durum-yok">Kırmızı: Durum Yok (Müdahale edilmedi)</span>
+        <span class="legend-item legend-open">Sarı: Open (Soruna bakıldı fakat çözülmedi)</span>
+        <span class="legend-item legend-closed">Yeşil: Closed (Sorun çözüldü)</span>
+    </div>
+
+    <div class="btn-container">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Geri Dön</a>
+        <a href="{% url 'export_to_excel1' %}?q={{ request.GET.q }}" class="btn btn-success">Excel'e Aktar</a>
+        <a href="{% url 'download_arama_pdf' %}?q={{ request.GET.q }}" class="btn btn-warning">PDF'e Aktar</a>
+
+    </div>
+
+    <form method="GET" action="{% url 'arama' %}" class="filter-form">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control search-input" placeholder="Arama Kriteri" value="{{ request.GET.q }}">
+            <div class="input-group-append">
+                <button class="btn btn-success search-button" type="submit">Arama</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Özet</th>
+                <th>Ayrıntı</th>
+                <th>
+                    Öncelik
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_priority', 'desc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_priority', 'asc')"></i>
+                    </div>
+                </th>
+                <th>
+                    Önem
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_importance', 'desc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_importance', 'asc')"></i>
+                    </div>
+                </th>
+                <th>Durum</th>
+                <th>Şirket</th>
+                <th>Atanan Kişi</th>
+                <th>Atayan Kişi</th>
+                <th>
+                    Oluşturulma Tarihi
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_created', 'desc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_created', 'asc')"></i>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if tickets %}
+                {% for ticket in tickets %}
+                    <tr class="{% if ticket.updates.last and ticket.updates.last.status == 'closed' %}row-closed{% elif ticket.updates.last and ticket.updates.last.status == 'open' %}row-opened{% else %}row-durum-yok{% endif %}">
+                        <td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.id }}</a></td>
+                        <td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.summary }}</a></td>
+                        <td>{{ ticket.details }}</td>
+                        <td>{{ ticket.priority }}</td>
+                        <td>{{ ticket.severity }}</td>
+                        <td>
+                            {% if ticket.updates.last %}
+                                {{ ticket.updates.last.status }}
+                            {% else %}
+                                Durum Yok
+                            {% endif %}
+                        </td>
+                        <td>{{ ticket.company.goruntu_adi }}</td>
+                        <td>{{ ticket.assigned_to.username }}</td>
+                        <td>{{ ticket.created_by.username }}</td>
+                        <td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10">Hiç destek talebi bulunamadı.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function sortTableByBackend(field, order) {
+        const currentUrl = new URL(window.location.href);
+
+        if (field === "sort_priority") {
+            currentUrl.searchParams.set("sort_priority", order);
+            currentUrl.searchParams.delete("sort_importance");
+            currentUrl.searchParams.delete("sort_created");
+        } else if (field === "sort_importance") {
+            currentUrl.searchParams.set("sort_importance", order);
+            currentUrl.searchParams.delete("sort_priority");
+            currentUrl.searchParams.delete("sort_created");
+        } else if (field === "sort_created") {
+            currentUrl.searchParams.set("sort_created", order);
+            currentUrl.searchParams.delete("sort_priority");
+            currentUrl.searchParams.delete("sort_importance");
+        }
+
+        window.location.href = currentUrl.toString();
+    }
+</script>
+</body>
+</html>

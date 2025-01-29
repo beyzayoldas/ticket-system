@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporları Filtrele</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .ticket-table {
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+  
+            .chart-container {
+                background: #fff;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+        
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        /* Style the buttons to appear side by side */
+        .btn-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .btn-container a {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+     
+        <div class="btn-container">
+        
+            <a href="{% url 'download_pdf' yer.id %}" class="btn btn-primary">PDF İndir</a>
+
+            <!-- "Geri Dön" button -->
+            <a href="{% url 'raporlari_yonet' %}" class="btn btn-secondary">Geri Dön</a>
+        </div>
+
+        <h1>{{ yer.goruntu_adi }} için raporlar</h1>
+
+       
+        <h2>Grafik Analiz</h2>
+        <div class="chart-container" style="text-align: center; margin: 20px 0;">
+            <img src="{{ chart_image }}" alt="Grafik Analiz" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        </div>
+        
+        
+        
+        
+        
+        
+
+      
+        <h2>Açık Talepler</h2>
+        <table class="table table-bordered ticket-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Özet</th>
+                    <th>Açıklama</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in open_tickets %}
+                <tr>
+                    <td>{{ ticket.summary }}</td>
+                    <td>{{ ticket.details }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">Açık destek yok.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Kapalı Talepler</h2>
+        <table class="table table-bordered ticket-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Özet</th>
+                    <th>Açıklama</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in closed_tickets %}
+                <tr>
+                    <td>{{ ticket.summary }}</td>
+                    <td>{{ ticket.details }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">Kapalı destek yok.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <script>
+            const ctx = document.getElementById('ticketChart').getContext('2d');
+            const ticketChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Açık Talepler', 'Kapalı Talepler'],
+                    datasets: [{
+                        label: 'Talepler',
+                        data: [{{ open_tickets_count }}, {{ closed_tickets_count }}],
+                        backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 2,
+                        borderRadius: 10, // Köşeleri yuvarlama
+                        barThickness: 50 // Çubuk genişliği
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#333', // Yazı rengi
+                                font: {
+                                    size: 14 // Yazı boyutu
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            footerFont: {
+                                size: 12,
+                                style: 'italic'
+                            },
+                            caretSize: 8,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)',
+                                borderDash: [5, 5] // Çizgileri kesik yapar
+                            },
+                            ticks: {
+                                color: '#333',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+        
+    </div>
+</body>
+
+</html>

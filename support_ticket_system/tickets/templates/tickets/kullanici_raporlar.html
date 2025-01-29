@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Raporları</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Kullanıcı Raporları</h1>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <canvas id="successChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="openClosedChart"></canvas>
+            </div>
+        </div>
+        <hr>
+        <h3 class="mt-5">Detaylı Kullanıcı Tablosu</h3>
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Açık Talepler</th>
+                    <th>Kapalı Talepler</th>
+                    <th>Başarı Oranı</th>
+                    <th>İncele</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.open_tickets }}</td>
+                    <td>{{ user.closed_tickets }}</td>
+                    <td>
+                        <span class="badge 
+                        {% if user.success_rate >= 80 %} badge-success
+                        {% elif user.success_rate >= 50 %} badge-warning
+                        {% else %} badge-danger
+                        {% endif %}">
+                            {{ user.success_rate|floatformat:2 }}%
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'kullanici_detay' user.id %}" class="btn btn-sm btn-info">Detay</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'raporlari_yonet' %}" class="btn btn-secondary">Geri Dön</a>
+    </div>
+
+    <script>
+        // Başarı Oranları Grafiği
+        const ctx1 = document.getElementById('successChart').getContext('2d');
+        const successChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: [{% for user in users %} "{{ user.username }}", {% endfor %}],
+                datasets: [{
+                    label: 'Başarı Oranı (%)',
+                    data: [{% for user in users %} {{ user.success_rate|floatformat:2 }}, {% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    
+        // Açık/Kapalı Talepler Grafiği
+        const totalOpen = [{% for user in users %} {{ user.open_tickets }}, {% endfor %}].reduce((a, b) => a + b, 0);
+        const totalClosed = [{% for user in users %} {{ user.closed_tickets }}, {% endfor %}].reduce((a, b) => a + b, 0);
+    
+        const ctx2 = document.getElementById('openClosedChart').getContext('2d');
+        const openClosedChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Açık Talepler', 'Kapalı Talepler'],
+                datasets: [{
+                    data: [totalOpen, totalClosed],
+                    backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(75, 192, 192, 0.5)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const total = totalOpen + totalClosed;
+                                const value = tooltipItem.raw;
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return tooltipItem.label + ': ' + percentage + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

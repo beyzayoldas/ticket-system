@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talep Detay</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+        }
+        .table {
+            margin-bottom: 0;
+            background-color: #e9ecef;
+        }
+        .table th, .table td {
+            padding: 8px;
+            border: 1px solid #c2c2c2;
+        }
+        .table th {
+            background-color: #dcdcdc;
+            font-weight: bold;
+            color: #333;
+            width: 20%;
+        }
+        .table td {
+            width: 30%;
+        }
+        .history-section {
+            margin-top: 20px;
+        }
+        .history-entry {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .status-open {
+            background-color: #f8d7da; /* Açık kırmızı */
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-closed {
+            background-color: #d4edda; /* Açık yeşil */
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Talep Detay</h1>
+        <table class="table table-bordered">
+            <tr>
+                <th>ID</th>
+                <td>{{ ticket.id }}</td>
+                <th>Yaratan Kişi</th>
+                <td>{{ ticket.created_by }}</td>
+            </tr>
+            <tr>
+                <th>Durum</th>
+                <td>{{ ticket.status }}</td>
+                <th>Atanan Kişi</th>
+                <td>{{ ticket.assigned_to }}</td>
+            </tr>
+            <tr>
+                <th>Özet</th>
+                <td>{{ ticket.summary }}</td>
+            </tr>
+            <tr>
+                <th>Ayrıntı</th>
+                <td colspan="3">{{ ticket.details }}</td>
+            </tr>
+            <tr>
+                <th>Program / Modül</th>
+                <td>{{ ticket.program_module }}</td>
+                <th>Şirket</th>
+                <td>{{ ticket.company }}</td>
+            </tr>
+            <tr>
+                <th>Öncelik</th>
+                <td>{{ ticket.priority }}</td>
+                <th>Önem</th>
+                <td>{{ ticket.severity }}</td>
+            </tr>
+            <tr>
+                <th>Toplam Süre - dk</th>
+                <td>{{ ticket.total_time }}</td>
+                <th>Özel Grup</th>
+                <td>{{ ticket.special_group }}</td>
+            </tr>
+            <tr>
+                <th>Eklenti</th>
+                <td>
+                    {% if ticket.attachment %}
+                        <a href="{{ ticket.attachment.url }}" target="_blank">Eklentiyi indir</a>
+                    {% else %}
+                        Eklenti yok
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        <a href="{% url 'filtered_tickets' ticket.company.goruntu_adi %}" class="btn btn-secondary mt-3">Geri Dön</a>
+    </div>
+
+    <!-- Tarihçe Bölümü -->
+    <div class="container history-section">
+        <h2>Tarihçe</h2>
+        {% if updates %}
+            {% for update in updates %}
+                <div class="history-entry status-{{ update.status }}">
+                    <p><strong>Tarih:</strong> {{ update.created_at }}</p>
+                    <p><strong>Kullanıcı:</strong> {{ update.user.username }}</p>
+                    <p><strong>Durum:</strong> {{ update.status }}</p>
+                    <p><strong>Yorum:</strong> {{ update.comment }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Henüz bir güncelleme yok.</p>
+        {% endif %}
+    </div>
+
+    <!-- Güncelleme Bölümü -->
+    <div class="container mt-4">
+        <h2>Ticket Güncelleme</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="status">Durum:</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Açık</option>
+                    <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Kapalı</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="assigned_to">Atanan Kişi:</label>
+                <select id="assigned_to" name="assigned_to" class="form-control">
+                    {% for user in users %}
+                    <option value="{{ user.id }}" {% if ticket.assigned_to_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comment">Yorum:</label>
+                <textarea id="comment" name="comment" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </form>
+    </div>
+</body>
+</html>

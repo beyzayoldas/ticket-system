@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yer Ata</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Yer Ata</h1>
+        
+        <p><strong>Kullanıcı:</strong> {{ user.username }}</p>
+        
+        <p><strong>Mevcut Yerler:</strong></p>
+        <ul class="list-group mb-3">
+            {% if mevcut_yerler %}
+                {% for yer in mevcut_yerler %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ yer.goruntu_adi }}
+                        <form method="post" action="{% url 'yer_sil_ata' user.id yer.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Çıkar</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">Henüz atanmış bir yer yok</li>
+            {% endif %}
+        </ul>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="yer">Yeni Yer Seçin:</label>
+                <select id="yer" name="yer" class="form-control">
+                    {% for yer in yerler %}
+                        <option value="{{ yer.id }}">
+                            {{ yer.goruntu_adi }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Ata</button>
+        </form>
+
+        <a href="{% url 'kullanicilari_yonet' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+    </div>
+</body>
+</html>

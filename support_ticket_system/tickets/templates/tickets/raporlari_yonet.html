@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporları Yönet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color like other pages */
+        }
+        .container {
+            margin-top: 50px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Allows absolute positioning of the button */
+        }
+        h1 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        table {
+            margin-top: 20px;
+        }
+        .action-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        p {
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="action-buttons">
+            <a href="{% url 'secenekler' %}" class="btn btn-secondary">Geri Dön</a>
+            <a href="{% url 'kullanici_raporlar' %}" class="btn btn-primary">Kullanıcı Raporlarına Git</a>
+        </div>
+
+        <h1>Raporları Yönet</h1>
+        <p>Bu sayfa üzerinden raporları yönetebilirsiniz.</p>
+
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Yer Adı</th>
+                    <th>Açık Talepler</th>
+                    <th>Kapalı Talepler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in report_data %}
+                <tr>
+                    <td>
+                        <a href="{% url 'filtered_rapor' item.yer.id %}">
+                            {{ item.yer.goruntu_adi }}
+                        </a>
+                    </td>
+                    <td>{{ item.open_tickets }}</td>
+                    <td>{{ item.closed_tickets }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">Veri yok</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kullanıcıları Yönet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table th {
+            background-color: #495057;
+            color: white;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .btn {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kullanıcıları Yönet</h1>
+        <form method="GET" action="{% url 'kullanicilari_yonet' %}" class="form-inline my-2 my-lg-0 justify-content-center">
+            <input class="form-control mr-sm-2" type="search" placeholder="Filtreleme Kriteri" aria-label="Search" name="q" value="{{ query }}">
+            <button class="btn btn-outline-success" type="submit">Arama</button>
+        </form>
+
+        <table class="table mt-3 table-bordered">
+            <thead>
+                <tr>
+                    <th>Kullanıcı Adı</th>
+                    <th>Email</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <a href="{% url 'yer_ata' user.id %}" class="btn btn-warning">Yer Ata</a>
+                        <a href="{% url 'kullanici_duzenle' user.id %}" class="btn btn-primary">Düzenle</a>    
+                    {% if user != request.user %} <!-- Giriş yapan kullanıcıyı filtrele -->
+                        {% if user.is_active %}
+                            <a href="{% url 'kullanici_durum_degistir' user.id %}" 
+                                class="btn btn-success" 
+                                onclick="return confirm('Bu kullanıcıyı pasif hale getirmek istediğinizden emin misiniz?')">
+                                Aktif
+                            </a>
+                        {% else %}
+                            <a href="{% url 'kullanici_durum_degistir' user.id %}" 
+                                class="btn btn-danger" 
+                                onclick="return confirm('Bu kullanıcıyı aktif hale getirmek istediğinizden emin misiniz?')">
+                                Pasif
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                
+                    </td>                    
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Hiçbir kullanıcı bulunamadı.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <a href="{% url 'kullanici_ekle' %}" class="btn btn-primary mt-3">Yeni Kullanıcı Ekle</a>
+            <a href="{% url 'secenekler' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+        </div>
+    </div>
+</body>
+</html>

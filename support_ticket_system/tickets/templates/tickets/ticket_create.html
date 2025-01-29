@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destek Oluştur</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-control {
+            border-radius: 5px;
+            height: 40px;
+        }
+        .form-control-file {
+            margin-top: 10px;
+        }
+        .btn-primary, .btn-secondary {
+            width: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .btn-secondary {
+            margin-left: 10px;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .form-col {
+            flex: 1;
+            padding: 10px;
+            min-width: 250px;
+        }
+        .checkbox-group .form-check {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 form-container">
+        <h1>Destek Oluştur</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="summary">Özet:</label>
+                        {{ form.summary }}
+                    </div>
+                    <div class="form-group">
+                        <label for="details">Ayrıntı:</label>
+                        {{ form.details }}
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Şirket:</label>
+                        {{ form.company }}
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Öncelik:</label>
+                        {{ form.priority }}
+                    </div>
+                    <div class="form-group">
+                        <label for="severity">Önem:</label>
+                        {{ form.severity }}
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="special_group">Özel Grup:</label>
+                        {{ form.special_group }}
+                    </div>
+                    <div class="form-group">
+                        <label for="ticket_type">Ticket Tipi:</label>
+                        {{ form.ticket_type }}
+                    </div>
+                    <div class="form-group">
+                        <label for="assigned_to">Atandığı Kişi:</label>
+                        {{ form.assigned_to }}
+                    </div>
+                    <div class="form-group">
+                        <label for="email_notification">E-Posta bildirisi gönder:</label>
+                        <div class="checkbox-group">
+                            {% for checkbox in form.email_notification %}
+                                <div class="form-check">
+                                    {{ checkbox.tag }} {{ checkbox.choice_label }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="attachment">Eklenti:</label>
+                        {{ form.attachment }}
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mt-3">Gönder</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

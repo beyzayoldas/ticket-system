@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Detayları</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .user-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .ticket-list {
+            margin-top: 20px;
+        }
+        .chart-container {
+            max-width: 300px; /* Maksimum genişlik */
+            margin: 20px auto; /* Ortalamak için */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="user-card">
+            <h2>{{ user.username }}</h2>
+            <p><strong>Ad Soyad:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Atanan Talepler:</strong> {{ tickets.count }}</p>
+        </div>
+
+        <!-- Başarı Oranı Grafiği -->
+        <div class="chart-container" style="max-width: 300px; margin: 0 auto;">
+            <canvas id="successChart"></canvas>
+        </div>
+        
+
+        <h3>Ticket Geçmişi</h3>
+        <div class="ticket-list">
+            {% if tickets %}
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Özet</th>
+                        <th>Durum</th>
+                        <th>Şirket</th>
+                        <th>Oluşturulma Tarihi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.summary }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if ticket.status == 'open' %} badge-warning
+                                {% else %} badge-success
+                                {% endif %}">
+                                {{ ticket.status|capfirst }}
+                            </span>
+                        </td>
+                        <td>{{ ticket.company.goruntu_adi }}</td>
+                        <td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Kullanıcıya atanmış ticket bulunmamaktadır.</p>
+            {% endif %}
+        </div>
+        {% if user.is_staff %}
+    <a href="{% url 'kullanici_raporlar' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+{% endif %}
+
+    </div>
+
+    <script>
+        // Başarı oranı ve kapalı/açık ticket sayıları view'dan gelen verilerle hesaplanıyor
+        const totalTickets = {{ total_tickets_count }};
+        const closedTickets = {{ closed_tickets_count }};
+        const successRate = {{ success_rate }};
+    
+        const ctx = document.getElementById('successChart').getContext('2d');
+        const successChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Başarılı', 'Başarısız'],
+                datasets: [{
+                    label: 'Başarı Oranı',
+                    data: [successRate, 100 - successRate],
+                    backgroundColor: ['#28a745', '#dc3545'], // Başarılı için yeşil, başarısız için kırmızı
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

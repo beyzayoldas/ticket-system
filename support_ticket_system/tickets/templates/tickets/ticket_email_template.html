@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <div style="width: 100%; background-color: #f4f4f4; padding: 20px;">
+        <div style="background-color: #ffffff; margin: 0 auto; padding: 20px; max-width: 600px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="text-align: center; color: #333;">Yeni Ticket Oluşturuldu</h2>
+            <p style="color: #555;">Merhaba,</p>
+            <p style="color: #555;">Yeni bir ticket oluşturuldu. Detaylar aşağıdadır:</p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">ID</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.id }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Durum</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.status }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Özet</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.summary }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Ayrıntı</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.details }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Program / Modül</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.program_module }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Şirket</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.company }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Öncelik</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.priority }}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: left; padding: 8px; background-color: #f9f9f9; border: 1px solid #ddd;">Önem</th>
+                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ ticket.severity }}</td>
+                </tr>
+                <!-- Diğer detaylar için satırlar ekleyebilirsiniz -->
+            </table>
+            <p style="color: #555; text-align: center; margin-top: 20px;">Ticket detayları için <a href="{{ ticket_url }}" style="color: #00466a; text-decoration: none;">buraya</a> tıklayın.</p>
+        </div>
+    </div>
+</body>
+</html>

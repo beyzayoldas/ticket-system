@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yer Y&ouml;netimi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- FontAwesome -->
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .edit-button {
+            color: #ffffff; 
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .edit-button:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+
+        .users-icon {
+            color: #007bff;
+        }
+
+        table th {
+            background-color: #495057;
+            color: white;
+            text-align: center;
+        }
+
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Yer Y&ouml;netimi</h1>
+        <div class="d-flex justify-content-end align-items-center">
+            <a href="{% url 'yer_ekle' %}" class="btn btn-primary mr-2">Yeni Yer Yarat</a>
+            <a href="{% url 'secenekler' %}" class="btn btn-secondary">Geri D&ouml;n</a>
+        </div>
+        <h2>Mevcut Yerler</h2>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Yer Adı</th>
+                    <th>Yer Anahtarı (Kısa Ad)</th>
+                    <th>Tanım</th>
+                    <th>İşlemler</th>
+                    <th>Kullanıcılar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for yer in yerler %}
+                <tr>
+                    <td>{{ yer.goruntu_adi }}</td>
+                    <td>{{ yer.kisa_ad }}</td>
+                    <td>{{ yer.tanim }}</td>
+                    <td>
+                        <a href="{% url 'yer_duzenle' yer.pk %}" class="btn edit-button">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'yer_sil_yonetim' yer.pk %}" class="btn btn-danger ml-2" onclick="return confirm('Bu yeri silmek istediğinize emin misiniz?');">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'yer_kullanicilar' yer.id %}" class="btn btn-link">
+                            <i class="fas fa-users users-icon"></i>
+                        </a>
+                    </td>                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

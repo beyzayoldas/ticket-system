@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ayarları Yönet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .config-table th {
+            background-color: #495057;
+            color: white;
+        }
+
+        .config-table th, .config-table td {
+            text-align: left;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ayarları Yönet</h1>
+        <h2>Konfigürasyon Ayarları</h2>
+
+        <table class="table config-table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Parametre Anahtarı</th>
+                    <th>Değer</th>
+                    <th>Tanım</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>mail.server.host</td>
+                    <td></td>
+                    <td>e-posta gönderilmesi için kullanılan SMTP sunucusunun adı ya da IP'si</td>
+                </tr>
+                <tr>
+                    <td>mail.server.port</td>
+                    <td>25</td>
+                    <td>SMTP Sunucusunun portu (Varsayılan 25)</td>
+                </tr>
+                <tr>
+                    <td>mail.server.username</td>
+                    <td></td>
+                    <td>Kimlik denetimi varsa SMTP Sunucusunun kullanıcı adı</td>
+                </tr>
+                <tr>
+                    <td>mail.server.password</td>
+                    <td></td>
+                    <td>Kimlik denetimi varsa SMTP Sunucusunun parolası</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center">
+            <a href="{% url 'secenekler' %}" class="btn btn-secondary mt-3">Geri Dön</a>
+        </div>
+    </div>
+</body>
+</html>

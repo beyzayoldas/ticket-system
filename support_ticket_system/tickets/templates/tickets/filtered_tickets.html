@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ yer.goruntu_adi }} İçin Kayıtlar</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+        }
+ 
+        .container {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+ 
+        .btn-container a {
+            margin-left: 10px;
+        }
+ 
+        .logo-container {
+            margin-bottom: 15px;
+        }
+ 
+        .logo-container img {
+            height: 60px;
+        }
+ 
+        h1 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+ 
+        table th {
+            background-color: #495057;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+ 
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+ 
+        .sort-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+ 
+        .sort-icon {
+            cursor: pointer;
+            font-size: 16px;
+        }
+ 
+        .btn-secondary {
+            background-color: #495057;
+            border-color: #495057;
+            transition: background-color 0.3s ease;
+        }
+ 
+        .btn-secondary:hover {
+            background-color: #343a40;
+        }
+ 
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+ 
+        /* Durum Renkleri */
+        .row-open {
+            background-color: #fff8e1; /* Sarı */
+            color: #f9a825;
+        }
+ 
+        .row-closed {
+            background-color: #e8f5e9; /* Yeşil */
+            color: #2e7d32;
+        }
+ 
+        .row-durum-yok {
+            background-color: #ffebee; /* Kırmızı */
+            color: #c62828;
+        }
+</style>
+</head>
+<body>
+    {% load static %}
+<div class="container">
+<div class="logo-container">
+<a href="{% url 'home' %}">
+<img src="{% static 'images/soktas_.webp' %}" alt="Soktas Logo">
+</a>
+</div>
+<h1>{{ yer.goruntu_adi }} için kayıtlar</h1>
+ 
+        <div class="btn-container">
+<a href="{% url 'home' %}" class="btn btn-secondary">Geri Dön</a>
+<a href="{% url 'export_to_excel' yer.id %}" class="btn btn-success">Excel'e Aktar</a>
+</div>
+ 
+        <table class="table table-bordered">
+<thead>
+<tr>
+<th>ID</th>
+<th>Durum</th>
+<th>Özet</th>
+<th>Ayrıntı</th>
+<th>Şirket</th>
+<th>
+                        Öncelik
+<div class="sort-container">
+<i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_priority', 'desc')"></i>
+<i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_priority', 'asc')"></i>
+</div>
+</th>
+<th>
+                        Önem
+<div class="sort-container">
+<i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_importance', 'desc')"></i>
+<i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_importance', 'asc')"></i>
+</div>
+</th>
+<th>Atanan Kişi</th>
+<th>Atayan Kişi</th>
+<th>
+                        Oluşturulma Tarihi
+<div class="sort-container">
+<i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_created', 'desc')"></i>
+<i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_created', 'asc')"></i>
+</div>
+</th>
+</tr>
+</thead>
+<tbody>
+                {% if tickets %}
+                {% for ticket in tickets %}
+<tr class="{% if ticket.updates.last and ticket.updates.last.status == 'open' %}row-open{% elif ticket.updates.last and ticket.updates.last.status == 'closed' %}row-closed{% else %}row-durum-yok{% endif %}">
+<td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.id }}</a></td>
+<td>{{ ticket.updates.last.status }}</td>
+<td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.summary }}</a></td>
+<td>{{ ticket.details }}</td>
+<td>{{ ticket.company.goruntu_adi }}</td>
+<td>{{ ticket.priority }}</td>
+<td>{{ ticket.severity }}</td>
+<td>{{ ticket.assigned_to.username }}</td>
+<td>{{ ticket.created_by.username }}</td>
+<td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
+</tr>
+                {% endfor %}
+                {% else %}
+<tr>
+<td colspan="10">Bu yer için kayıt bulunamadı.</td>
+</tr>
+                {% endif %}
+</tbody>
+</table>
+</div>
+ 
+    <script>
+        function sortTableByBackend(field, order) {
+            const currentUrl = new URL(window.location.href);
+ 
+            if (field === "sort_priority") {
+                currentUrl.searchParams.set("sort_priority", order);
+                currentUrl.searchParams.delete("sort_importance");
+                currentUrl.searchParams.delete("sort_created");
+            } else if (field === "sort_importance") {
+                currentUrl.searchParams.set("sort_importance", order);
+                currentUrl.searchParams.delete("sort_priority");
+                currentUrl.searchParams.delete("sort_created");
+            } else if (field === "sort_created") {
+                currentUrl.searchParams.set("sort_created", order);
+                currentUrl.searchParams.delete("sort_priority");
+                currentUrl.searchParams.delete("sort_importance");
+            }
+ 
+            window.location.href = currentUrl.toString();
+        }
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ yer.goruntu_adi }} - Atanan Ticketlar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table th {
+            background-color: #495057;
+            color: white;
+            text-align: center;
+        }
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .row-open {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .row-closed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .row-durum-yok {
+            background-color: #fff8e1;
+            color: #f9a825;
+        }
+        .sort-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        .sort-icon {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>{{ yer.goruntu_adi }} - Atanan Ticketlar</h1>
+    <div class="btn-container">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Geri Dön</a>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Durum</th>
+                <th>Özet</th>
+                <th>Ayrıntı</th>
+                <th>
+                    Öncelik
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_priority', 'asc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_priority', 'desc')"></i>
+                    </div>
+                </th>
+                <th>
+                    Önem
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_importance', 'asc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_importance', 'desc')"></i>
+                    </div>
+                </th>
+                <th>
+                    Oluşturma Tarihi
+                    <div class="sort-container">
+                        <i class="fas fa-sort-up sort-icon" onclick="sortTableByBackend('sort_created', 'asc')"></i>
+                        <i class="fas fa-sort-down sort-icon" onclick="sortTableByBackend('sort_created', 'desc')"></i>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr class="{% if ticket.status == 'open' %}row-open{% elif ticket.status == 'closed' %}row-closed{% else %}row-durum-yok{% endif %}">
+                <td>{{ ticket.id }}</td>
+                <td>{{ ticket.status }}</td>
+                <td><a href="{% url 'ticket_detail' ticket.id %}">{{ ticket.summary }}</a></td>
+                <td>{{ ticket.details }}</td>
+                <td>{{ ticket.priority }}</td>
+                <td>{{ ticket.severity }}</td>
+                <td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Atanan ticket bulunamadı.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+</div>
+<script>
+    function sortTableByBackend(field, order) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(field, order);
+        window.location.href = currentUrl.toString();
+    }
+</script>
+</body>
+</html>
